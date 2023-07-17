@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+  <title>Localizador</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/static/main.css" />
+
+  <style>
+    /* Define tamanho fixo para o contêiner do mapa */
+    .map {
+      height: 1000px;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <section class="hero is-fullheight">
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <p>Vagas Perto De Voce</p>
+
+          {% for spot in vagas %} 
+          <div class="parking-spot">
+            <h2>{{ spot.nome }}</h2>
+            <p>Distância: {{ spot.distancia }} km</p>
+            <p>Endereço: {{ spot.endereço }}</p>
+            <p>Preço: R$ {{ spot.preço }}</p>
+            <hr />
+          </div>
+          {% endfor %}
+        </div>
+
+        <div class="col">
+          <div id="map" class="map"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <script>
+    // Obtem as coordenadas de latitude e longitude do usuário
+    var latitude = "{{ latitude }}";
+    var longitude = "{{ longitude }}";
+
+    var spots = JSON.parse('{{ spots|safe }}');
+
+    // Cria um mapa Leaflet com as coordenadas do usuário
+    var map = L.map('map').setView([latitude,longitude], 13); 
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+      maxZoom: 18,
+      subdomains: ['a', 'b', 'c'],
+      }).addTo(map);
+
+      // Adicionar um marcador no mapa para a localização do usuário
+      L.marker([latitude,longitude])
+      .addTo(map)
+      .bindPopup("Sua localização atual");
+
+    // Iterar sobre os spots e adicionar marcadores para cada um no mapa
+    spots.forEach(function(spot) {
+      L.marker([spot.latitude, spot.longitude])
+        .addTo(map)
+        .bindPopup(
+          '<b>' + spot.nome + '</b><br>' +
+          'Distância: ' + spot.distancia + ' km<br>' +
+          'Endereço: ' + spot.endereço + '<br>' +
+          'Preço: R$ ' + spot.preço
+        );
+    });
+  </script>
+</body>
+</html>

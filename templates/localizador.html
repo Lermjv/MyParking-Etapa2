@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no"
+    />
+    <title>Localizador</title>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="/static/main.css" />
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  </head>
+  <body>
+    <section class="hero is-fullheight">
+      <div class="container">
+        <div class="row">
+          <div class="col">
+            <div class="distancia direita">
+              <label for="distancia" class="form-label"
+                >Distância máxima para busca:</label
+              >
+              <input
+                type="range"
+                class="form-range"
+                min="0"
+                max="20000"
+                id="distancia"
+                oninput="this.nextElementSibling.value = this.value + ' m'"
+              />
+
+              <output>5000 m</output>
+            </div>
+            <div class="localizacao direita">
+              <script>
+                function getLocation() {
+                  if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(sendLocation);
+                  } else {
+                    alert("A geolocalização não é suportada por este navegador.");
+                  }
+                }
+
+                function sendLocation(position) {
+                  const latitude = position.coords.latitude;
+                  const longitude = position.coords.longitude;
+                  const radius = document.getElementById("distancia").value;
+
+                  // Redirecionar para a rota /parking com os parâmetros de latitude e longitude como parâmetros de query
+                  window.location.href =
+                    "/parking?latitude=" +
+                    latitude +
+                    "&longitude=" +
+                    longitude +
+                    "&radius=" +
+                    radius;
+                }
+              </script>
+              <button onclick="getLocation()" class="btn btn-success">
+                Procurar
+              </button>
+            </div>
+          </div>
+
+          <div class="col">
+            <img
+              class="map"
+              src="https://img.freepik.com/premium-vector/city-map-set-town-streets-with-green-line-park-river-downtown-gps-navigation-plans-abstract-transportation-urban-vector-drawing-town-small-road-maps-urban-patterns-texture_93083-1066.jpg?w=360"
+              alt="old map image"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+  </body>
+</html>
